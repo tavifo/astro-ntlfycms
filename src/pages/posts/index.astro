@@ -1,0 +1,39 @@
+---
+// Layout Import
+import MainLayout from '../../layouts/MainLayout.astro'
+let allPosts = await Astro.glob('../../data/*.md');
+allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
+const readableDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+---
+
+<MainLayout title="Blog" description={`The Edvinas Blog.`}>
+    <div>
+        <article>
+            <header>
+                <h2>Blog</h2>
+            </header>
+
+            {allPosts.map((post, index) => {
+            return (
+            <div class="articles">
+                { index !== 0 &&
+                <hr /> }
+                <article>
+                    <header>
+                        <h3>
+                            <a href={`/posts/${post.frontmatter.slug}`}>{post.frontmatter.title}</a>
+                        </h3>
+                        <div class="article-date">
+                            Posted <time>{readableDate(post.frontmatter.date)}</time>
+                        </div>
+                    </header>
+                    <p>{post.frontmatter.description}</p>
+                </article>
+            </div>
+            )
+            })}
+        </article>
+    </div>
+</MainLayout>

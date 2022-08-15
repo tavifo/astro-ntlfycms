@@ -1,0 +1,32 @@
+---
+// Layout Import
+import MainLayout from '../../layouts/MainLayout.astro'
+
+export async function getStaticPaths() {
+  const allPosts = await Astro.glob('../../data/*.md');
+  const allSortedPosts = allPosts.sort((a, b) => new Date(b.frontmatter.date).valueOf() - new Date(a.frontmatter.date).valueOf());
+  return allSortedPosts.map(p => ({
+    params: { slug: p.frontmatter.slug },
+    props: { post: p },
+  }));
+}
+
+const { Content, frontmatter } = Astro.props.post;
+const readableDate = (date) => {
+  return new Date(date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+---
+
+<MainLayout title="Blog" description={`The Edvinas Blog.`}>
+  <div>
+    <article>
+      <header>
+        <h2>{frontmatter.title}</h2>
+        <div class="article-date">
+          Posted <time>{readableDate(frontmatter.date)}</time>
+        </div>
+      </header>
+      <Content />
+    </article>
+  </div>
+</MainLayout>
